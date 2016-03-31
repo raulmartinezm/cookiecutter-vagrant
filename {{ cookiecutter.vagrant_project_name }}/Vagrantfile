@@ -1,0 +1,33 @@
+require 'yaml'
+
+# Specify Vagrant version and Vagrant API version
+Vagrant.require_version ">= 1.6.0"
+VAGRANTFILE_API_VERSION = "2"
+
+DEFAULT_MEMORY = {{ cookiecutter.default_memory }}
+DEFAULT_CPUS = {{ cookiecutter.default_cpus }}
+
+# Load machine definition
+machines = YAML.load_file('machine_definition.yml')
+
+# Vagrant configuration section.
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    machines.each do |machine|
+        config.vm.define machine['name'] do |m|
+            # Configure virtual machine.
+            m.vm.box = machine['box']
+            m.vm.network "private_network", ip: machine["ip"]
+            m.vm.provider :virtualbox do |vb|
+                vb.memory = machine['memory'] ||= DEFAULT_MEMORY
+                vb.cpus = machine['cpus'] ||= DEFAULT_CPUS
+            end
+            {% if cookiecutter.shell_provisioning != 'False' %}
+            # Shell provisioning
+            provision_files = Dir["provision/*#{machine["provision_scripts"]}.sh"]
+            provision_files.each do |file|
+                m.vm.provision :shell, path: file
+            end
+            {% endif %}
+        end
+    end
+end

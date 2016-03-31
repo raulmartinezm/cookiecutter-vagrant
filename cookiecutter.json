@@ -1,0 +1,12 @@
+
+{
+    "full_name": "",
+    "email": "",
+    "vagrant_project_name": "vagrant-my.new.project",
+    "project_short_description": "My new project with Vagrant!",
+    "license": ["MIT", "Apache", "GPLv3", "No License"],
+    "shell_provisioning": true,
+    "year": "2016",
+    "default_memory": 512,
+    "default_cpus": 1
+}
